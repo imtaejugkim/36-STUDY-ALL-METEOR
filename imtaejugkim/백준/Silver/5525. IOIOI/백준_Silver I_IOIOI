@@ -1,0 +1,29 @@
+fun main() {
+        val n = readLine()!!.toInt()
+        val m = readLine()!!.toInt()
+        val p = readLine()!!
+        var i = 0
+        var count = 0
+        var result = 0
+
+        while (i < m-2) {
+            // ioi인지 체크
+            if (p[i] == 'I' && p[i+1] == 'O' && p[i+2] == 'I') {
+                // 연속된 ioi가 몇개인지 count에서 체크
+                count++
+                // 연속된 ioi가 n개가 맞다면 result 추가
+                if (count == n) {
+                    result++
+                    count-- // n==2, ioioioi 인 경우는 2번 체크
+                }
+                // 체킹 되면 다음 ioi 를 확인
+                i += 2
+            } else {
+                // 아니면 그냥 다음 차례
+                count = 0
+                i += 1
+            }
+        }
+
+        println(result)
+    }
