@@ -1,0 +1,19 @@
+class Solution {
+    fun solution(number: String, k: Int): String {
+        val list = mutableListOf<Char>()
+        var count = k
+
+        for (i in 0 until number.length) {
+            // 첫번째 시행을 위해 list의 isnotempty 추가
+            while (count > 0 && list.isNotEmpty() && list.last() < number[i]) {
+                list.removeAt(list.size - 1)
+                count--
+            }
+
+            list.add(number[i])
+        }
+
+        // 아직 다 안되었다면, 앞에서부터 가장 큰 수
+        return list.take(number.length - k).joinToString("")
+    }
+}
