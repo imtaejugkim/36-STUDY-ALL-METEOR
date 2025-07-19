@@ -1,0 +1,40 @@
+class Solution {
+    fun solution(s: String): Int {
+        var answer: Int = 0
+
+        for (i in 0 until s.length) {
+            // i부터 끝까지 + 0부터 i까지
+            // 0) 0부터 끝까지 + 0부터 0
+            // 1) 1부터 끝까지 + 0부터 1
+            // ...
+            val nextString = s.substring(i) + s.substring(0, i)
+
+            val stack = ArrayDeque<Char>()
+            var isValid = true
+
+            // 스택이 비어있는 경우 체크
+            for (char in nextString) {
+                // 각 괄호마다 매칭
+                when (char) {
+                    '(', '[', '{' -> stack.addLast(char)
+                    ')' -> if (stack.isEmpty() || stack.removeLast() != '(') {
+                        isValid = false
+                        break
+                    }
+                    ']' -> if (stack.isEmpty() || stack.removeLast() != '[') {
+                        isValid = false
+                        break
+                    }
+                    '}' -> if (stack.isEmpty() || stack.removeLast() != '{') {
+                        isValid = false
+                        break
+                    }
+                }
+            }
+
+            if (isValid && stack.isEmpty()) answer++
+        }
+
+        return answer
+    }
+}
