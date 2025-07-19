@@ -1,0 +1,34 @@
+class Solution {
+    fun solution(board: Array<IntArray>, moves: IntArray): Int {
+        var answer = 0
+        val stack = ArrayDeque<Int>()
+
+        // move 만큼 반복
+        for(i in 0 until moves.size){
+            // 꺼내는 세로 열
+            val column = moves[i] - 1
+
+            for (row in 0 until board.size){
+                // 해당 column에 가장 위를 꺼냄
+                val target = board[row][column]
+                if (target != 0) {
+                    board[row][column] = 0 // 인형을 꺼내고 0으로 바꿈
+
+                    // 스택이 비어 있지 않을 때, 마지막이 같을 때
+                    if(stack.isNotEmpty() && stack.last() == target) {
+                        stack.removeLast()
+                        answer += 2
+                    } else {
+                        stack.addLast(target)
+                    }
+                    
+                    // 위에 꺼내면 다음 move
+                    break
+                }
+            }
+
+        }
+
+        return answer
+    }
+}
