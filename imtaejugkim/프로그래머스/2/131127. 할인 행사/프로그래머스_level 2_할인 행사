@@ -1,0 +1,26 @@
+class Solution {
+    fun solution(want: Array<String>, number: IntArray, discount: Array<String>): Int {
+        var answer: Int = 0
+        val map = mutableMapOf<String, Int>()
+
+        for(i in 0 until want.size){
+            map[want[i]] = number[i]
+        }
+
+        // 10개씩 체크, 0부터 시작하므로 9개를 뺌
+        for(i in 0 until discount.size - 9){
+            val discountMap = mutableMapOf<String, Int>()
+            // i일부터 i+9일까지 체크
+            for (j in i until i + 10) {
+                // 값이 없으면 0, 있으면 discount[j]의 value
+                discountMap[discount[j]] = discountMap.getOrDefault(discount[j], 0) + 1
+            }
+
+            if(discountMap == map){
+                answer++
+            }
+        }
+
+        return answer
+    }
+}
