@@ -1,0 +1,31 @@
+class Solution {
+    fun solution(record: Array<String>): Array<String> {
+        var answer = arrayOf<String>()
+
+        var map = HashMap<String, String>()
+
+        for(i in 0 until record.size){
+            val arr = record[i].split(" ").map { it.toString() }
+
+            // 1.uid1234 Muzi
+            // 2.uid4567 Prodo
+            // 3.uid1234 Prodo
+            // 4.uid4567 Ryan
+            // enter 는 arr 3개, leave 는 arr 2개
+            if(arr[0] == "Enter" || arr[0] == "Change") {
+                map[arr[1]] = arr[2]
+            }
+        }
+
+        for(i in 0 until record.size){
+            val arr = record[i].split(" ").map { it.toString() }
+            if(arr[0] == "Enter"){
+                answer += "${map[arr[1]]}님이 들어왔습니다."
+            } else if(arr[0] == "Leave"){
+                answer += "${map[arr[1]]}님이 나갔습니다."
+            }
+        }
+
+        return answer
+    }
+}
