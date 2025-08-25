@@ -1,0 +1,24 @@
+class Solution {
+    fun solution(n: Int, computers: Array<IntArray>): Int {
+        var answer = 0
+        val visited = BooleanArray(n){ false }
+
+        for (i in 0 until n) {
+            if (!visited[i]) { // 아직 방문하지 않은 컴퓨터라면
+                dfs(i, computers, visited) // i와 연결된 모든 컴퓨터 방문
+                answer++ // 네트워크 하나 완성
+            }
+        }
+
+        return answer
+    }
+
+    fun dfs(node: Int, computers: Array<IntArray>, visited: BooleanArray) {
+        visited[node] = true
+        for (i in computers.indices) {
+            if (computers[node][i] == 1 && !visited[i]) {
+                dfs(i, computers, visited)
+            }
+        }
+    }
+}
