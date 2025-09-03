@@ -1,0 +1,44 @@
+class Solution {
+    fun solution(enroll: Array<String>,
+                 referral: Array<String>,
+                 seller: Array<String>,
+                 amount: IntArray): IntArray {
+        var answer: IntArray = intArrayOf()
+
+        // (이름, 이익) 매퍼
+        var profitMap = mutableMapOf<String, Int>()
+        // (판매자, 추천인) 매퍼
+        var referralTree = mutableMapOf<String, String>()
+
+        for (i in enroll.indices) {
+            // 모든 판매원 초기 이익 0
+            profitMap[enroll[i]] = 0
+            // 각 판매자 추천인 저장 (없는 경우 "-" 저장)
+            referralTree[enroll[i]] = referral[i]
+        }
+
+        for (i in seller.indices) {
+            var money = amount[i] * 100
+            var name = seller[i]
+
+            // 중단 조건 enroll이 팔거나 도달한 경우
+            while (name != "-") {
+                val give = money / 10 // 줄 돈
+                val receive = money - give // 받을 돈
+                profitMap[name] = profitMap[name]!! + receive
+
+                if (give < 1) break // 1원 미만
+
+                name = referralTree[name]!!
+                money = give
+            }
+        }
+
+        for (name in enroll) {
+            answer += profitMap[name]!!
+        }
+
+        println(answer.contentToString())
+        return answer
+    }
+}
