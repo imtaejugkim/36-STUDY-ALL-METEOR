@@ -1,0 +1,35 @@
+class Solution {
+    fun solution(id_list: Array<String>, report: Array<String>, k: Int): IntArray {
+        val answer = IntArray(id_list.size)
+        var reportMap = mutableMapOf<String, Int>()
+        var userMap = mutableMapOf<String, MutableSet<String>>()
+
+        for (id in id_list) {
+            reportMap[id] = 0
+            userMap[id] = mutableSetOf()
+        }
+
+        // 중복 신고 제거, 피신고자 카운트
+        for (r in report) {
+            val (from, to) = r.split(" ")
+            // from이 아직 to를 신고하지 않았다면
+            if (to !in userMap[from]!!) {
+                userMap[from]!!.add(to)
+                reportMap[to] = reportMap[to]!! + 1
+            }
+        }
+
+        for (id in id_list) {
+            var cnt = 0
+            for (user in userMap[id]!!) {
+                if (reportMap[user]!! >= k) {
+                    cnt++
+                }
+                answer[id_list.indexOf(id)] = cnt
+            }
+        }
+
+        println(answer.contentToString())
+        return answer
+    }
+}
