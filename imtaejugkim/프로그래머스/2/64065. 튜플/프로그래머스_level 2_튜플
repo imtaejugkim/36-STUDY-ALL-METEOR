@@ -1,0 +1,21 @@
+class Solution {
+    fun solution(s: String): IntArray {
+        var answer = intArrayOf()
+        
+        val nums = Regex("\\d+").findAll(s).map{ it.value.toInt() }.toList()
+
+        
+        val map = HashMap<Int, Int>()
+        
+        for(i in 0 until nums.size){
+            map[nums[i]] = (map[nums[i]] ?: 0) + 1
+        }
+        
+        answer = map.entries
+            .sortedByDescending{it.value}
+            .map{it.key}
+            .toIntArray()
+        
+        return answer
+    }
+}
