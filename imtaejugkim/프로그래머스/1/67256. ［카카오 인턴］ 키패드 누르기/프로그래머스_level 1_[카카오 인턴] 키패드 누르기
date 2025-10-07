@@ -1,0 +1,71 @@
+import kotlin.math.abs
+
+class Solution {
+    fun solution(numbers: IntArray, hand: String): String {
+        var answer = ""
+        var handArr = mutableListOf<String>()
+        var lastLeft = -1
+        var lastRight = -1
+        val startLeft = intArrayOf(3,0)
+        val startRight = intArrayOf(3,2)
+    
+        val numsArr = arrayOf(
+            intArrayOf(3, 1), // 0
+            intArrayOf(0, 0), // 1
+            intArrayOf(0, 1), // 2
+            intArrayOf(0, 2), // 3
+            intArrayOf(1, 0), // 4
+            intArrayOf(1, 1), // 5
+            intArrayOf(1, 2), // 6
+            intArrayOf(2, 0), // 7
+            intArrayOf(2, 1), // 8
+            intArrayOf(2, 2)  // 9
+        )
+        
+        fun dist(a: IntArray, b: IntArray): Int{
+            return abs(a[0] - b[0]) + abs(a[1] - b[1])
+        }
+        
+        for (i in 0 until numbers.size) {
+            when (numbers[i]) {
+                1, 4, 7 -> {
+                    handArr.add("L")
+                    lastLeft = numbers[i]
+                }
+                3, 6, 9 -> {
+                    handArr.add("R")
+                    lastRight = numbers[i]
+                }
+                else -> {
+                    // 현재 양 손의 좌표
+                    val leftPos = if (lastLeft  == -1) startLeft else numsArr[lastLeft]
+                    val rightPos = if (lastRight == -1) startRight else numsArr[lastRight]
+                    val target = numsArr[numbers[i]]
+
+                    val ld = dist(leftPos, target)
+                    val rd = dist(rightPos, target)
+
+                    if (ld < rd) {
+                        handArr.add("L")
+                        lastLeft = numbers[i]
+                    } else if (ld > rd) {
+                        handArr.add("R")
+                        lastRight = numbers[i]
+                    } else {
+                        if (hand == "left") {
+                            handArr.add("L")
+                            lastLeft = numbers[i]
+                        } else {
+                            handArr.add("R")
+                            lastRight = numbers[i]
+                        }
+                    }
+                }
+            }
+        }
+        
+        answer = handArr.joinToString("")
+        return answer
+    }
+    
+}
