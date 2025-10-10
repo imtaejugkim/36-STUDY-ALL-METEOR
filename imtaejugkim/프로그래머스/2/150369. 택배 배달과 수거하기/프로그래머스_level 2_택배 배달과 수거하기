@@ -1,0 +1,22 @@
+class Solution {
+    fun solution(cap: Int, n: Int, deliveries: IntArray, pickups: IntArray): Long {
+        var answer: Long = 0
+        
+        var deliverySum = 0
+        var pickupSum = 0
+        
+        for(i in n-1 downTo 0){
+            deliverySum += deliveries[i]
+            pickupSum += pickups[i] 
+            
+            while(deliverySum > 0 || pickupSum > 0){
+                answer += (i+1)*2
+                
+                deliverySum -= cap
+                pickupSum -= cap
+            }
+        }
+        
+        return answer
+    }
+}
