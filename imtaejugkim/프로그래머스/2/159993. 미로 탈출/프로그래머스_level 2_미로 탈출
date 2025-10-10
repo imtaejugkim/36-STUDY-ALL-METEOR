@@ -1,0 +1,76 @@
+import java.util.ArrayDeque
+
+class Solution {
+    
+    data class Pos(val r: Int, val c: Int)
+    
+    fun bfsGrid(
+        start: Pos,
+        canGo: (Int, Int) -> Boolean,
+        n: Int,
+        m: Int
+    ) : Array<IntArray> {
+        val dist = Array(n) {IntArray(m) {-1}}
+        val q = ArrayDeque<Pos>()
+        dist[start.r][start.c] = 0
+        q.add(start)
+        
+        val dr = intArrayOf(-1,1,0,0)
+        val dc = intArrayOf(0,0,-1,1)
+        
+        while(q.isNotEmpty()){
+            val (r,c) = q.removeFirst()
+            for(d in 0 until 4){
+                val nr = r + dr[d]
+                val nc = c + dc[d]
+                
+                if(nr !in 0 until n || nc !in 0 until m) continue
+                if(dist[nr][nc] != -1) continue
+                if(!canGo(nr, nc)) continue
+                dist[nr][nc] = dist[r][c] + 1
+                q.add(Pos(nr, nc))
+            }
+        }
+        
+        return dist
+    }
+    
+    fun solution(maps: Array<String>): Int {
+        var answer: Int = 0
+        
+        val n = maps.size
+        val m = maps[0].length
+        val board = Array(n) { r -> maps[r].toCharArray() }
+        
+        var S = Pos(0,0)
+        var L = Pos(0,0)
+        var E = Pos(0,0)
+        
+        for (r in 0 until n){
+            for(c in 0 until m){
+                when (board[r][c]){
+                    'S' -> S = Pos(r,c)
+                    'L' -> L = Pos(r,c)
+                    'E' -> E = Pos(r,c)
+                }
+                
+            }
+        }
+        
+        fun canGo(r: Int, c: Int) = board[r][c] != 'X'
+        
+        //S -> L
+        val dist1 = bfsGrid(S, ::canGo, n, m)
+        val d1 = dist1[L.r][L.c]
+        if(d1 == -1) return -1
+        
+        //L -> E
+        val dist2 = bfsGrid(L, ::canGo, n, m)
+        val d2 = dist2[E.r][E.c]
+        if(d2 == -1) return -1
+        
+        answer = d1 + d2
+        
+        return answer
+    }
+}
