@@ -1,0 +1,32 @@
+class Solution {
+    fun solution(today: String, terms: Array<String>, privacies: Array<String>): IntArray {
+        var answer: IntArray = intArrayOf()
+        
+        val answerList = mutableListOf<Int>()
+        val map = HashMap<String, Int>()
+        
+        val (year, month, day) = today.split(".").map {it.toInt()}
+        val todayCal = day + month * 28 + year * 28 * 12
+        
+        for(i in 0 until terms.size){
+            val (termType, months) = terms[i].split(" ")
+            map[termType] = months.toInt()
+        }
+        
+        for(i in 0 until privacies.size) {
+            val (date, category) = privacies[i].split(" ")
+            val (year1, month1, day1) = date.split(".").map{it.toInt()}
+            
+            val privacyCal = day1 + month1 * 28 + year1 * 28 * 12
+            println("todayCal = $todayCal, privacyCal = $privacyCal. categoryCal = ${(map[category] ?: 0) * 28}")
+            if((todayCal - privacyCal) >= (map[category] ?: 0 )* 28) {
+                answerList.add(i+1)
+            }
+        }
+        
+        answer = answerList.toIntArray()
+        
+        
+        return answer
+    }
+}
