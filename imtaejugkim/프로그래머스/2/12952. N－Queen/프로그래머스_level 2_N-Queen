@@ -1,0 +1,51 @@
+class Solution {
+    private var count = 0
+    private var size = 0
+
+    private lateinit var colUsed: BooleanArray
+    private lateinit var diag1: BooleanArray
+    private lateinit var diag2: BooleanArray
+
+    fun solution(n: Int): Int {
+        size = n
+
+        colUsed  = BooleanArray(n)
+        diag1    = BooleanArray(2 * n)      // row + col
+        diag2    = BooleanArray(2 * n)      // row - col + (n - 1)
+
+        // 0번째 행부터 시작
+        dfs(0)
+
+        return count
+    }
+
+    private fun dfs(row: Int) {
+        // 1. 모든 행에 다 놓았다면
+        if (row == size) { 
+            count++
+            return
+        }
+
+        // 2. 이 row에서 열을 하나씩 시도해본다
+        for (col in 0 until size) {
+            val d1 = row + col
+            val d2 = row - col + (size - 1)
+
+            // 이미 같은 열 또는 같은 대각선에 퀸이 있으면 스킵
+            if (colUsed[col] || diag1[d1] || diag2[d2]) continue
+
+            // (row, col)에 퀸을 놓는다고 가정
+            colUsed[col] = true
+            diag1[d1] = true
+            diag2[d2] = true
+
+            // 다음 행으로 진행
+            dfs(row + 1)
+
+            // 원상복구
+            colUsed[col] = false
+            diag1[d1] = false
+            diag2[d2] = false
+        }
+    }
+}
