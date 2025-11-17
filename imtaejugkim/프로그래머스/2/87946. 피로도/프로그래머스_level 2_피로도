@@ -1,0 +1,35 @@
+class Solution {
+    var maxAnswer = 0
+
+    fun solution(k: Int, dungeons: Array<IntArray>): Int {
+        var answer = 0
+        val visited = BooleanArray(dungeons.size) { false }
+        dfs(k, dungeons, visited, 0)
+        
+        answer = maxAnswer
+        return answer
+    }
+
+    private fun dfs(k: Int,dungeons: Array<IntArray>,visited: BooleanArray,count: Int) {
+        // 최댓값
+        maxAnswer = maxOf(maxAnswer, count)
+
+        for (i in 0 until dungeons.size) {
+            val needK = dungeons[i][0] // 최소 필요 피로도
+            val useK = dungeons[i][1] // 소모 피로도
+
+            // 이미 방문했거나, 피로도가 부족하면 스킵
+            if (visited[i]) {
+                continue
+            }
+            if (k < needK) {
+                continue
+            }
+
+            // 다음 탐색을 위해 true
+            visited[i] = true
+            dfs(k - useK, dungeons, visited, count + 1)
+            visited[i] = false // 다시 false로 변경
+        }
+    }
+}
