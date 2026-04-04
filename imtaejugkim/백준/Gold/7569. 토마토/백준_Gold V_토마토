@@ -1,0 +1,77 @@
+data class MoveVector(
+    val x: Int,
+    val y: Int,
+    val z: Int
+)
+
+fun main() {
+    val (m,n,h) = readLine()!!.trim().split(" ").map { it.toInt() }
+    val map = Array(h) {Array(n) { IntArray(m) } }
+    var days = 0
+
+    for(k in 0 until h) {
+        for (i in 0 until n) {
+            val row = readLine()!!.trim().split(" ").map { it.toInt() }
+            for (j in 0 until m) {
+                map[k][i][j] = row[j]
+            }
+        }
+    }
+
+    val dx = intArrayOf(-1,1,0,0,0,0)
+    val dy = intArrayOf(0,0,-1,1,0,0)
+    val dz = intArrayOf(0,0,0,0,-1,1)
+    val visited = Array(h) {Array(n) { BooleanArray(m) } }
+    val queue = ArrayDeque<MoveVector>()
+
+    fun bfs() {
+        for(k in 0 until h) {
+            for(i in 0 until n) {
+                for(j in 0 until m) {
+                    if(map[k][i][j] == 1) {
+                        queue.addLast(MoveVector(i,j,k))
+                        visited[k][i][j] = true
+                    }
+                }
+            }
+        }
+
+        while (queue.isNotEmpty()) {
+            val (cx, cy, cz) = queue.removeFirst()
+
+
+            for(i in 0 until 6) {
+                val nx = cx + dx[i]
+                val ny = cy + dy[i]
+                val nz = cz + dz[i]
+
+                if(nx in 0 until n
+                    && ny in 0 until m
+                    && nz in 0 until h
+                    && visited[nz][nx][ny] == false
+                    && map[nz][nx][ny] != -1) {
+                    map[nz][nx][ny] = map[cz][cx][cy] + 1
+                    visited[nz][nx][ny] = true
+                    queue.addLast(MoveVector(nx, ny, nz))
+                }
+            }
+        }
+    }
+
+    bfs()
+
+    for(k in 0 until h) {
+        for(i in 0 until n) {
+            for(j in 0 until m) {
+                if(map[k][i][j] == 0) {
+                    println(-1)
+                    return
+                }
+                days = maxOf(days, map[k][i][j])
+            }
+        }
+    }
+
+    println(days -1 )
+
+}
