@@ -1,0 +1,65 @@
+fun main() {
+    val (n, m) = readLine()!!.trim().split(" ").map { it.toInt() }
+    val (startX, startY, startD) = readLine()!!.trim().split(" ").map { it.toInt() }
+    val map = Array (n) { IntArray(m) }
+
+    for (i in 0 until n) {
+        val row = readLine()!!.trim().split(" ").map { it.toInt() }
+        for (j in 0 until m) {
+            map[i][j] = row[j]
+        }
+    }
+
+    val dx = intArrayOf(-1,0,1,0)
+    val dy = intArrayOf(0,1,0,-1)
+
+    var count = 0
+    var x = startX
+    var y = startY
+    var d = startD
+
+    while(true) {
+        // 현재 칸 청소
+        if(map[x][y] == 0) {
+            map[x][y] = 2
+            count++
+        }
+
+        var found = false
+
+        // 4방향 탐색
+        for(i in 0 until 4) {
+            d = (d+3) % 4
+            val nx = x + dx[d]
+            val ny = y + dy[d]
+
+            if(nx in 0 until n
+                && ny in 0 until m
+                && map[nx][ny] == 0
+            ) {
+                x = nx
+                y = ny
+                found = true
+                break
+            }
+        }
+
+        if(found) continue
+
+        // 없는 경우
+        val bx = x - dx[d]
+        val by = y - dy[d]
+
+        if(bx !in 0 until n
+            || by !in 0 until m
+            || map[bx][by] == 1
+        ) {
+            println(count)
+            return
+        } else {
+            x = bx
+            y = by
+        }
+    }
+
+}
