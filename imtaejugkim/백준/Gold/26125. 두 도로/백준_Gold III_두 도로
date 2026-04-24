@@ -1,0 +1,77 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        DataInputStream in = new DataInputStream(new BufferedInputStream(System.in));
+        int N = nextInt(in), M = nextInt(in), S = nextInt(in), T = nextInt(in);
+
+        final long INF = (long) 1e15;
+        long[][] d = new long[N + 1][N + 1];
+        for (int i = 1; i <= N; i++) {
+            Arrays.fill(d[i], INF);
+            d[i][i] = 0;
+        }
+
+        for (int i = 0; i < M; i++) {
+            int u = nextInt(in), v = nextInt(in), w = nextInt(in);
+            if (u == v) continue;                  // 셀프 루프 무시
+            if (w < d[u][v]) d[u][v] = w;          // 중복 간선은 최솟값
+        }
+
+        // Floyd-Warshall
+        for (int k = 1; k <= N; k++) {
+            for (int i = 1; i <= N; i++) {
+                if (d[i][k] >= INF) continue;
+                long dik = d[i][k];
+                long[] dk = d[k];
+                long[] di = d[i];
+                for (int j = 1; j <= N; j++) {
+                    long nd = dik + dk[j];
+                    if (nd < di[j]) di[j] = nd;
+                }
+            }
+        }
+
+        int Q = nextInt(in);
+        StringBuilder sb = new StringBuilder();
+        long baseST = d[S][T];
+
+        for (int q = 0; q < Q; q++) {
+            int a1 = nextInt(in), b1 = nextInt(in), c1 = nextInt(in);
+            int a2 = nextInt(in), b2 = nextInt(in), c2 = nextInt(in);
+
+            long ans = baseST;
+            // E1 한 번
+            long v = d[S][a1] + c1 + d[b1][T];
+            if (v < ans) ans = v;
+            // E2 한 번
+            v = d[S][a2] + c2 + d[b2][T];
+            if (v < ans) ans = v;
+            // E1 → E2
+            v = d[S][a1] + c1 + d[b1][a2] + c2 + d[b2][T];
+            if (v < ans) ans = v;
+            // E2 → E1
+            v = d[S][a2] + c2 + d[b2][a1] + c1 + d[b1][T];
+            if (v < ans) ans = v;
+
+            if (ans >= INF) sb.append(-1);
+            else sb.append(ans);
+            sb.append('\n');
+        }
+
+        System.out.print(sb);
+    }
+
+    static int nextInt(DataInputStream in) throws IOException {
+        int c, n = 0;
+        boolean neg = false;
+        do { c = in.read(); } while (c != -1 && (c < '0' || c > '9') && c != '-');
+        if (c == '-') { neg = true; c = in.read(); }
+        while (c >= '0' && c <= '9') {
+            n = n * 10 + c - '0';
+            c = in.read();
+        }
+        return neg ? -n : n;
+    }
+}
