@@ -1,0 +1,64 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine().trim());
+        int[] x = new int[N], y = new int[N], r = new int[N];
+        for (int i = 0; i < N; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            x[i] = Integer.parseInt(st.nextToken());
+            y[i] = Integer.parseInt(st.nextToken());
+            r[i] = Integer.parseInt(st.nextToken());
+        }
+
+        if (N == 1) {
+            System.out.println(0);
+            return;
+        }
+
+        // Prim's MST
+        double[] minEdge = new double[N];
+        boolean[] inMST = new boolean[N];
+        Arrays.fill(minEdge, Double.MAX_VALUE);
+        minEdge[0] = 0.0;
+        double totalCost = 0.0;
+
+        for (int iter = 0; iter < N; iter++) {
+            int u = -1;
+            double minVal = Double.MAX_VALUE;
+            for (int j = 0; j < N; j++) {
+                if (!inMST[j] && minEdge[j] < minVal) {
+                    minVal = minEdge[j];
+                    u = j;
+                }
+            }
+            inMST[u] = true;
+            totalCost += minVal;
+
+            for (int v = 0; v < N; v++) {
+                if (!inMST[v]) {
+                    double cost = beltLength(x[u], y[u], r[u], x[v], y[v], r[v]);
+                    if (cost < minEdge[v]) minEdge[v] = cost;
+                }
+            }
+        }
+
+        System.out.printf(Locale.US, "%.12f%n", totalCost);
+    }
+
+    static double beltLength(int x1, int y1, int r1, int x2, int y2, int r2) {
+        long dx = x1 - x2, dy = y1 - y2;
+        long d2 = dx * dx + dy * dy;
+        long rSum = (long)(r1 + r2);
+        // 거리 ≤ 반지름 합 → 접하거나 겹침(포함 포함) → 벨트 불필요
+        if (d2 <= rSum * rSum) return 0.0;
+
+        double d = Math.sqrt((double) d2);
+        int diff = Math.abs(r1 - r2);
+        double L_t = Math.sqrt((double) d2 - (double) diff * diff);
+        double theta = Math.asin((double) diff / d);
+        return 2.0 * L_t + Math.PI * (r1 + r2) + 2.0 * theta * diff;
+    }
+}
