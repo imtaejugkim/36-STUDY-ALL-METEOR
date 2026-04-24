@@ -1,0 +1,54 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int S = Integer.parseInt(st.nextToken());
+
+        long[] x = new long[N];
+        long[] h = new long[N];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) x[i] = Long.parseLong(st.nextToken());
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) h[i] = Long.parseLong(st.nextToken());
+
+        int s = S - 1; // 0-indexed
+        int L = s, R = s;
+        long reachLeft = x[s] - h[s];
+        long reachRight = x[s] + h[s];
+
+        // 양방향 번갈아 확장
+        while (true) {
+            boolean changed = false;
+
+            // 왼쪽 확장: x[L-1] >= reachLeft 인 동안
+            while (L - 1 >= 0 && x[L - 1] >= reachLeft) {
+                L--;
+                if (x[L] - h[L] < reachLeft) reachLeft = x[L] - h[L];
+                if (x[L] + h[L] > reachRight) reachRight = x[L] + h[L];
+                changed = true;
+            }
+
+            // 오른쪽 확장: x[R+1] <= reachRight 인 동안
+            while (R + 1 < N && x[R + 1] <= reachRight) {
+                R++;
+                if (x[R] - h[R] < reachLeft) reachLeft = x[R] - h[R];
+                if (x[R] + h[R] > reachRight) reachRight = x[R] + h[R];
+                changed = true;
+            }
+
+            if (!changed) break;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = L; i <= R; i++) {
+            if (i > L) sb.append(' ');
+            sb.append(i + 1);
+        }
+        System.out.println(sb.toString());
+    }
+}
