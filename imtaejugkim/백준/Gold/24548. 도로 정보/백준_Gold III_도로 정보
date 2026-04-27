@@ -1,0 +1,37 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine().trim());
+        String s = br.readLine();
+
+        // 상태: T*27 + G*9 + F*3 + P, 각 mod 3
+        int[] cnt = new int[81];
+        int t = 0, g = 0, f = 0, p = 0;
+
+        // 빈 prefix
+        cnt[0]++;
+
+        for (int i = 0; i < N; i++) {
+            char ch = s.charAt(i);
+            switch (ch) {
+                case 'T': t = (t + 1) % 3; break;
+                case 'G': g = (g + 1) % 3; break;
+                case 'F': f = (f + 1) % 3; break;
+                case 'P': p = (p + 1) % 3; break;
+            }
+            int state = t * 27 + g * 9 + f * 3 + p;
+            cnt[state]++;
+        }
+
+        long answer = 0;
+        for (int i = 0; i < 81; i++) {
+            long c = cnt[i];
+            answer += c * (c - 1) / 2;
+        }
+
+        System.out.println(answer);
+    }
+}
