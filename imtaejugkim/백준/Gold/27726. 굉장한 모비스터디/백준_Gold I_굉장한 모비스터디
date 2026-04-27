@@ -1,0 +1,89 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    static int[][] parent;
+    static int[][] rnk;
+
+    static int find(int g, int x) {
+        // Path compression (iterative)
+        int root = x;
+        while (parent[g][root] != root) root = parent[g][root];
+        while (parent[g][x] != root) {
+            int nxt = parent[g][x];
+            parent[g][x] = root;
+            x = nxt;
+        }
+        return root;
+    }
+
+    static void union(int g, int a, int b) {
+        int ra = find(g, a), rb = find(g, b);
+        if (ra == rb) return;
+        if (rnk[g][ra] < rnk[g][rb]) { int t = ra; ra = rb; rb = t; }
+        parent[g][rb] = ra;
+        if (rnk[g][ra] == rnk[g][rb]) rnk[g][ra]++;
+    }
+
+    public static void main(String[] args) throws IOException {
+        DataInputStream in = new DataInputStream(new BufferedInputStream(System.in));
+        int N = nextInt(in);
+        int M1 = nextInt(in), M2 = nextInt(in), M3 = nextInt(in);
+        int[] Ms = {M1, M2, M3};
+
+        parent = new int[3][N + 1];
+        rnk = new int[3][N + 1];
+        for (int g = 0; g < 3; g++) {
+            for (int i = 0; i <= N; i++) parent[g][i] = i;
+        }
+
+        for (int g = 0; g < 3; g++) {
+            for (int i = 0; i < Ms[g]; i++) {
+                int a = nextInt(in), b = nextInt(in);
+                union(g, a, b);
+            }
+        }
+
+        // 각 직원의 (root1, root2, root3) 튜플로 그룹화
+        // N+1 <= 100001이므로 base = 100003으로 long 인코딩 (3승 ≈ 10^15, long 안전)
+        final long BASE = 100003L;
+        HashMap<Long, List<Integer>> groups = new HashMap<>();
+        for (int i = 1; i <= N; i++) {
+            long key = (long) find(0, i) * BASE * BASE
+                     + (long) find(1, i) * BASE
+                     + (long) find(2, i);
+            groups.computeIfAbsent(key, k -> new ArrayList<>()).add(i);
+        }
+
+        // 크기 >= 2인 그룹만 수집
+        List<List<Integer>> result = new ArrayList<>();
+        for (List<Integer> g : groups.values()) {
+            if (g.size() >= 2) result.add(g);
+        }
+
+        // 그룹 내부는 1..N 순회로 이미 오름차순 → 첫 원소가 최소
+        // 그룹들 사이에서 첫 원소 기준 정렬
+        result.sort(Comparator.comparingInt(x -> x.get(0)));
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(result.size()).append('\n');
+        for (List<Integer> g : result) {
+            for (int i = 0; i < g.size(); i++) {
+                if (i > 0) sb.append(' ');
+                sb.append(g.get(i));
+            }
+            sb.append('\n');
+        }
+        System.out.print(sb);
+    }
+
+    static int nextInt(DataInputStream in) throws IOException {
+        int c, n = 0;
+        do { c = in.read(); } while (c != -1 && (c < '0' || c > '9'));
+        while (c >= '0' && c <= '9') {
+            n = n * 10 + c - '0';
+            c = in.read();
+        }
+        return n;
+    }
+}
