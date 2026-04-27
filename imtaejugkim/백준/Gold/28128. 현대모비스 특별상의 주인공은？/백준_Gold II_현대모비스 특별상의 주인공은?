@@ -1,0 +1,44 @@
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+
+        String[][] grid = new String[N][M];
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < M; j++) {
+                grid[i][j] = st.nextToken();
+            }
+        }
+
+        // 정렬 및 중복 제거를 위해 TreeSet 사용
+        TreeSet<String> winners = new TreeSet<>();
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                String s = grid[i][j];
+                // 가로 거리 1 (인접) → 1×2 사각형
+                if (j + 1 < M && grid[i][j + 1].equals(s)) winners.add(s);
+                // 가로 거리 2 → 1×3 사각형 (X _ X)
+                else if (j + 2 < M && grid[i][j + 2].equals(s)) winners.add(s);
+                // 세로 거리 1 (인접) → 2×1 사각형
+                if (i + 1 < N && grid[i + 1][j].equals(s)) winners.add(s);
+                // 세로 거리 2 → 3×1 사각형 (X _ X)
+                else if (i + 2 < N && grid[i + 2][j].equals(s)) winners.add(s);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (winners.isEmpty()) {
+            sb.append("MANIPULATED").append('\n');
+        } else {
+            for (String name : winners) sb.append(name).append('\n');
+        }
+        System.out.print(sb);
+    }
+}
